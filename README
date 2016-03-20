@@ -1,0 +1,17 @@
+Bottle-based simple static file paste server.
+
+* Highlighting done via `highlight` (http://www.andre-simon.de/)
+
+* Password protected submission and deletion (weak, md5), viewing public
+
+* Three interfaces:
+    1) HTML form located at /
+    2) Simple form located at /cmd
+    3) Easy command line pasting via `curl .. /cmd`, with helper script `paste_cmd`
+        e.g.: cat ~/file.c | paste_cmd c http://localhost
+
+* All dependencies are contained here, bootstrap and jquery - I had plans more JS.
+* All pastes are kept in pastes/PASTE-* directories
+
+* There is also an interface to delete pastes
+
