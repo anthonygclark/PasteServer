@@ -10,8 +10,6 @@ Bottle-based simple static file paste server.
     3) Easy command line pasting via `curl .. /cmd`, with helper script `paste_cmd`
         e.g.: cat ~/file.c | paste_cmd c http://localhost
 
-* All dependencies are contained here, bootstrap and jquery - I had plans more JS.
+* All dependencies are contained here, bootstrap and jquery - I had plans for more JS.
 * All pastes are kept in pastes/PASTE-* directories
-
-* There is also an interface to delete pastes
 

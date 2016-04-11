@@ -1,13 +1,5 @@
 #!/usr/bin/env python2
-#
-# Simple form paster.
-#
-# Visit the form at / or...
-# Use curl to post:
-# curl -d lang=c -d code="test test test" -d submit http://localhost:8888/cmd
-#
 
-import sys
 import hashlib
 import subprocess
 import io
@@ -15,9 +7,9 @@ import os
 import shutil
 
 from lib.pastie import HTMLPaster
-from bottle import Bottle, route, get, post, request, run, static_file, redirect, template
+from bottle import Bottle, route, get, post, request, static_file, redirect, template
 
-class PasteServer(Bottle):
+class Paster(Bottle):
 	class BottleHTML:
 		''' HTML bottle templates for the Paste Server '''
 		INDEX="""\
@@ -168,12 +160,13 @@ Deleting <b>{{name}}</b> ... enter password to continue
 	COLORS = HTMLPaster.HighlightProcess.STYLES
 
 	def __init__(self, runtime_dir, password):
-		super(PasteServer, self).__init__()
+		super(Paster, self).__init__()
 		self.name = "Paste Bottle"
 		self.paste_dir = os.path.join(runtime_dir, "pastes")
 		self.static_dir = os.path.join(runtime_dir, "static")
 		self.password = hashlib.md5(password).hexdigest()
 
+		# Both JS and CSS are in the same location
 		self.paster = HTMLPaster(self.paste_dir, "/static" , "/static")
 
 		self.route('/'                                , method='GET'  , callback=self.paste_index)
@@ -196,8 +189,8 @@ Deleting <b>{{name}}</b> ... enter password to continue
 
 	def paste_index(self):
 		''' Creates a template for the main paste form '''
-		return template(self.BottleHTML.INDEX, pretext='', statics="/" + self.static_dir,
-				LANGS=self.LANGS, COLORS=self.COLORS)
+		return template(self.BottleHTML.INDEX, pretext='', statics="/static",
+				  LANGS=self.LANGS, COLORS=self.COLORS)
 
 
 	def bad_pass(self):
@@ -238,7 +231,6 @@ Deleting <b>{{name}}</b> ... enter password to continue
 		style = request.forms.get('color')
 		lang = ''
 
-		## XXX unsafe, password in memory, right?
 		password = request.forms.get('password')
 		m = hashlib.md5()
 		m.update(password or '')
@@ -256,6 +248,8 @@ Deleting <b>{{name}}</b> ... enter password to continue
 
 	def javascript_css_getter(self, filepath):
 		''' Static file server for JS and CSS files '''
+		print os.getcwd()
+		print os.path.join(os.getcwd(), self.static_dir)
 		return static_file(filepath, root=self.static_dir)
 
 
@@ -285,20 +279,4 @@ Deleting <b>{{name}}</b> ... enter password to continue
 		''' Renders the INDEX of a paste '''
 		return static_file(paste_path + '/' + index, root=self.paste_dir)
 
-
-if __name__ == '__main__':
-	run_host = '127.0.0.1'
-	run_port = 8888
-	password = ''
-
-	if len(sys.argv) > 1:
-		run_host = sys.argv[1]
-	if len(sys.argv) > 2:
-		run_port = sys.argv[2]
-	if len(sys.argv) > 3:
-		password = sys.argv[3]
-
-	service = PasteServer("./", password)
-
-	service.run(host=run_host, port=run_port)
 
