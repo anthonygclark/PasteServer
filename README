@@ -7,9 +7,9 @@ Bottle-based simple static file paste server.
 * Three interfaces:
     1) HTML form located at /
     2) Simple form located at /cmd
-    3) Easy command line pasting via `curl .. /cmd`, with helper script `paste_cmd`
-        e.g.: cat ~/file.c | paste_cmd c http://localhost
+    3) Easy command line pasting via ./paste_via_curl.sh
 
-* All dependencies are contained here, bootstrap and jquery - I had plans for more JS.
+* All dependencies are contained here, bootstrap and jquery.
 * All pastes are kept in pastes/PASTE-* directories
+* Can run as a module via `python2 -m paste_bottle` or ./run_paste_server.sh
 
